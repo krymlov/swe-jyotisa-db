@@ -7,6 +7,7 @@ package org.jyotisa.db.enums;
 
 import org.apache.commons.text.StringSubstitutor;
 import org.bson.Document;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -16,7 +17,7 @@ import org.jyotisa.api.naksatra.INaksatra;
 import org.jyotisa.api.rasi.IRasi;
 import org.jyotisa.api.tithi.ITithi;
 import org.jyotisa.bhava.EBhava;
-import org.jyotisa.db.AJyotisaTest;
+import org.jyotisa.db.AbstractTest;
 import org.jyotisa.dignity.EDignity;
 import org.jyotisa.graha.EGraha;
 import org.jyotisa.karaka.ECharaKaraka;
@@ -34,11 +35,14 @@ import org.jyotisa.vaara.EVaara;
 import org.jyotisa.varga.EVarga;
 import org.jyotisa.vimsottari.EVimsottariDasa;
 import org.swisseph.api.ISweEnum;
-import org.swisseph.utils.IDegreeUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.apache.commons.lang3.BooleanUtils.toInteger;
 import static org.swisseph.utils.IDegreeUtils.toIDMSms;
 
@@ -47,26 +51,32 @@ import static org.swisseph.utils.IDegreeUtils.toIDMSms;
  * @version 1.0, 2020-02
  */
 @Execution(ExecutionMode.SAME_THREAD)
-public class JyotishEntitySqlTest extends AJyotisaTest {
+public class KundaliEnumsTest extends AbstractTest {
 
-    protected StringBuilder createInsertStmt(IKundaliEnum[] values, String table) {
+    @BeforeAll
+    protected void initSqlFile() throws IOException {
+        sqlFile = new File("etc", "enums/enums_kundali" + ".sql");
+        writeStringToFile(sqlFile, "# JYOTISA ENUMS", UTF_8);
+    }
+
+    protected void appendInsertStmt(IKundaliEnum[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
 
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (IKundaliEnum value : values) {
-            Document document = kundaliEnumProps(value).append("table", table);
+            builder.append('\n');
+            Document document = enumProps(value).append("table", table);
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
-    protected StringBuilder createBhavaInsertStmt(EBhava[] values, String table) {
+    protected void createBhavaInsertStmt(EBhava[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid}," +
                 "${trikona},${kendra},${apoklima},${upachaya},${apachaya}," +
                 "${dusthana},${panapara},${chaturasra},${maraka},${trishadaya}," +
@@ -76,8 +86,9 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (EBhava value : values) {
+            builder.append('\n');
             IBhava bhava = value.bhava();
-            Document document = kundaliEnumProps(value).append("table", table);
+            Document document = enumProps(value).append("table", table);
             document.append("trikona", null == bhava ? 0 : toInteger(bhava.trikona()));
             document.append("kendra", null == bhava ? 0 : toInteger(bhava.kendra()));
             document.append("apoklima", null == bhava ? 0 : toInteger(bhava.apoklima()));
@@ -90,14 +101,13 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
             document.append("trishadaya", null == bhava ? 0 : toInteger(bhava.trishadaya()));
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
-    protected StringBuilder createRasiInsertStmt(ERasi[] values, String table) {
+    protected void createRasiInsertStmt(ERasi[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid}," +
                 "${movable},${fixed},${dual},${tattva},${lord}," +
                 "${start},${close},'${code}','${name}');";
@@ -106,8 +116,9 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (ERasi value : values) {
+            builder.append('\n');
             IRasi rasi = value.rasi();
-            Document document = kundaliEnumProps(value).append("table", table);
+            Document document = enumProps(value).append("table", table);
             document.append("movable", null == rasi ? 0 : toInteger(rasi.movable()));
             document.append("fixed", null == rasi ? 0 : toInteger(rasi.fixed()));
             document.append("dual", null == rasi ? 0 : toInteger(rasi.dual()));
@@ -117,14 +128,13 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
             document.append("close", null == rasi ? 0 : toIDMSms(value.segment().close()));
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
-    protected StringBuilder createNaksatraInsertStmt(ENaksatra[] values, String table) {
+    protected void createNaksatraInsertStmt(ENaksatra[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid}," +
                 "${lord},${start},${close},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
@@ -132,21 +142,21 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (ENaksatra value : values) {
+            builder.append('\n');
             INaksatra naksatra = value.naksatra();
-            Document document = kundaliEnumProps(value).append("table", table);
+            Document document = enumProps(value).append("table", table);
             document.append("lord", null == naksatra ? 0 : naksatra.lord().fid());
             document.append("start", null == naksatra ? 0 : toIDMSms(value.segment().start()));
             document.append("close", null == naksatra ? 0 : toIDMSms(value.segment().close()));
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
-    protected StringBuilder createPadaInsertStmt(ENaksatraPada[] values, String table) {
+    protected void createPadaInsertStmt(ENaksatraPada[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid},${naksatra},${pada}," +
                 "${rasi},${navamsa},${start},${close},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
@@ -154,7 +164,8 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (ENaksatraPada value : values) {
-            Document document = kundaliEnumProps(value).append("table", table);
+            builder.append('\n');
+            Document document = enumProps(value).append("table", table);
             document.append("rasi", value.rasi() == null ? 0 : value.rasi().fid());
             document.append("navamsa", value.navamsa() == null ? 0 : value.navamsa().fid());
             document.append("naksatra", value.naksatra() == null ? 0 : value.naksatra().fid());
@@ -163,14 +174,13 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
             document.append("pada", value.pada());
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
-    protected StringBuilder createTithiInsertStmt(ETithi[] values, String table) {
+    protected void createTithiInsertStmt(ETithi[] values, String table) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid}," +
                 "${paksa},${lord},${start},${close},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
@@ -178,103 +188,103 @@ public class JyotishEntitySqlTest extends AJyotisaTest {
         Arrays.sort(values, Comparator.comparingInt(ISweEnum::fid));
 
         for (ETithi value : values) {
+            builder.append('\n');
             ITithi tithi = value.tithi();
-            Document document = kundaliEnumProps(value).append("table", table);
+            Document document = enumProps(value).append("table", table);
             document.append("paksa", tithi == null ? 0 : tithi.paksa().fid());
             document.append("lord", tithi == null ? 0 : tithi.lord().fid());
             document.append("start", tithi == null ? 0 : toIDMSms(value.segment().start()));
             document.append("close", tithi == null ? 0 : toIDMSms(value.segment().close()));
             StringSubstitutor substr = new StringSubstitutor(document);
             String statement = substr.replace(strPatterns);
-            builder.append(statement).append('\n');
+            builder.append(statement);
         }
 
-        System.out.println(builder);
-        return builder;
+        appendEnumsToSqlFile(table, builder);
     }
 
     @Test
-    void insertTattva() {
-        createInsertStmt(ETattva.values(), "tattva");
+    void testTattva() throws IOException {
+        appendInsertStmt(ETattva.values(), "tattva");
     }
 
     @Test
-    void insertBhava() {
+    void testBhava() throws IOException {
         createBhavaInsertStmt(EBhava.values(), "bhava");
     }
 
     @Test
-    void insertVDasa() {
-        createInsertStmt(EVimsottariDasa.values(), "vim_dasa");
+    void testVimsottariDasa() throws IOException {
+        appendInsertStmt(EVimsottariDasa.values(), "vimsottari_dasa");
     }
 
     @Test
-    void insertDignity() {
-        createInsertStmt(EDignity.values(), "dignity");
+    void testDignity() throws IOException {
+        appendInsertStmt(EDignity.values(), "dignity");
     }
 
     @Test
-    void insertGraha() {
-        createInsertStmt(EGraha.values(), "graha");
+    void testGraha() throws IOException {
+        appendInsertStmt(EGraha.values(), "graha");
     }
 
     @Test
-    void insertKaraka() {
-        createInsertStmt(ECharaKaraka.values(), "chara_karaka");
+    void testCharaKaraka() throws IOException {
+        appendInsertStmt(ECharaKaraka.values(), "chara_karaka");
     }
 
     @Test
-    void insertKarana() {
-        createInsertStmt(EKarana.values(), "karana");
+    void testKarana() throws IOException {
+        appendInsertStmt(EKarana.values(), "karana");
     }
 
     @Test
-    void insertLagna() {
-        createInsertStmt(ELagna.values(), "lagna");
+    void testLagna() throws IOException {
+        appendInsertStmt(ELagna.values(), "lagna");
     }
 
     @Test
-    void insertNaksatra() {
+    void testNaksatra() throws IOException {
         createNaksatraInsertStmt(ENaksatra.values(), "naksatra");
     }
 
     @Test
-    void insertNPada() {
+    void testNaksatraPada() throws IOException {
         createPadaInsertStmt(ENaksatraPada.values(), "naksatra_pada");
     }
 
     @Test
-    void insertRasi() {
+    void testRasi() throws IOException {
         createRasiInsertStmt(ERasi.values(), "rasi");
     }
 
     @Test
-    void insertTithi() {
+    void testTithi() throws IOException {
         createTithiInsertStmt(ETithi.values(), "tithi");
     }
 
     @Test
-    void insertUpagraha() {
-        createInsertStmt(EUpagraha.values(), "upagraha");
+    void testUpagraha() throws IOException {
+        appendInsertStmt(EUpagraha.values(), "upagraha");
     }
 
     @Test
-    void insertVaara() {
-        createInsertStmt(EVaara.values(), "vaara");
+    void testVaara() throws IOException {
+        appendInsertStmt(EVaara.values(), "vaara");
     }
 
     @Test
-    void insertVarga() {
-        createInsertStmt(EVarga.values(), "varga");
+    void testVarga() throws IOException {
+        appendInsertStmt(EVarga.values(), "varga");
     }
 
     @Test
-    void insertNityaYoga() {
-        createInsertStmt(ENityaYoga.values(), "nitya_yoga");
+    void testNityaYoga() throws IOException {
+        appendInsertStmt(ENityaYoga.values(), "nitya_yoga");
     }
 
     @Test
-    void insertMaasa() {
-        createInsertStmt(EMaasa.values(), "maasa");
+    void testMaasa() throws IOException {
+        appendInsertStmt(EMaasa.values(), "maasa");
     }
 }
