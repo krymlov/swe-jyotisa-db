@@ -24,6 +24,7 @@ import java.util.Arrays;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparingInt;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
+import static org.swisseph.app.SweAyanamsa.AY_USER;
 
 /**
  * @author Yura
@@ -38,7 +39,7 @@ public class SwissephEnumsTest extends AbstractTest {
         writeStringToFile(sqlFile, "# SWE ENUMS", UTF_8);
     }
 
-    protected void appendInsertStmt(ISweEnum[] values, String table) throws IOException {
+    protected void appendInsertStmt(ISweEnum[] values, String table, boolean delete) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
         Arrays.sort(values, comparingInt(ISweEnum::fid));
@@ -51,21 +52,30 @@ public class SwissephEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, delete);
     }
 
     @Test
     void testSweHouseSystem() throws IOException {
-        appendInsertStmt(SweHouseSystem.values(), "house_system");
+        appendInsertStmt(SweHouseSystem.values(), "house_system", true);
     }
 
     @Test
     void testSweAyanamsa() throws IOException {
-        appendInsertStmt(SweAyanamsa.values(), "ayanamsa");
+        SweAyanamsa[] ayanamsas = SweAyanamsa.values();
+        int ayanamsasLength = ayanamsas.length;
+
+        for (int i = 0; i < AY_USER.fid(); i++) {
+            if (i < ayanamsasLength) {
+                SweAyanamsa ayanamsa = SweAyanamsa.values()[i];
+                appendInsertStmt(new ISweEnum[]{ayanamsa}, "ayanamsa", i == 0);
+            }
+        }
+
     }
 
     @Test
     void testSweGender() throws IOException {
-        appendInsertStmt(SweGender.values(), "gender");
+        appendInsertStmt(SweGender.values(), "gender", true);
     }
 }

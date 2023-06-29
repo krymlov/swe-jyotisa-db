@@ -39,6 +39,12 @@ public abstract class AbstractTest {
     protected File sqlFile;
 
     /**
+     * Place : Kyiv, Ukraine<br>
+     * Location : 50°27'N, 30°31'E. Time Zone : (+02:00)
+     */
+    public static final ISweGeoLocation GEO_KYIV = new SweGeoLocation(30 + (31 / 60.), 50 + (27 / 60.), 180);
+
+    /**
      * Place : London, UK
      * Longitude in DMS format: 0 W 7 0
      * Latitude in DMS format: 51 N 30 0
@@ -72,8 +78,8 @@ public abstract class AbstractTest {
         }
     }
 
-    protected void appendEnumsToSqlFile(String table, StringBuilder data) throws IOException {
-        writeStringToFile(sqlFile, "\n\nDELETE FROM " + table + ";", UTF_8, true);
+    protected void appendEnumsToSqlFile(String table, StringBuilder data, boolean delete) throws IOException {
+        if (delete) writeStringToFile(sqlFile, "\n\nDELETE FROM " + table + ";", UTF_8, true);
         writeStringToFile(sqlFile, data.toString(), UTF_8, true);
     }
 

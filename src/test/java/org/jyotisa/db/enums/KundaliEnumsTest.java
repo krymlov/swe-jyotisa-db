@@ -59,7 +59,7 @@ public class KundaliEnumsTest extends AbstractTest {
         writeStringToFile(sqlFile, "# JYOTISA ENUMS", UTF_8);
     }
 
-    protected void appendInsertStmt(IKundaliEnum[] values, String table) throws IOException {
+    protected void appendInsertStmt(IKundaliEnum[] values, String table, boolean delete) throws IOException {
         String strPatterns = "INSERT INTO ${table} VALUES (${id},${fid},'${code}','${name}');";
         StringBuilder builder = new StringBuilder(1024);
 
@@ -73,7 +73,7 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, delete);
     }
 
     protected void createBhavaInsertStmt(EBhava[] values, String table) throws IOException {
@@ -104,7 +104,7 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, true);
     }
 
     protected void createRasiInsertStmt(ERasi[] values, String table) throws IOException {
@@ -131,7 +131,7 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, true);
     }
 
     protected void createNaksatraInsertStmt(ENaksatra[] values, String table) throws IOException {
@@ -153,7 +153,7 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, true);
     }
 
     protected void createPadaInsertStmt(ENaksatraPada[] values, String table) throws IOException {
@@ -177,7 +177,7 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, true);
     }
 
     protected void createTithiInsertStmt(ETithi[] values, String table) throws IOException {
@@ -200,12 +200,12 @@ public class KundaliEnumsTest extends AbstractTest {
             builder.append(statement);
         }
 
-        appendEnumsToSqlFile(table, builder);
+        appendEnumsToSqlFile(table, builder, true);
     }
 
     @Test
     void testTattva() throws IOException {
-        appendInsertStmt(ETattva.values(), "tattva");
+        appendInsertStmt(ETattva.values(), "tattva", true);
     }
 
     @Test
@@ -215,32 +215,32 @@ public class KundaliEnumsTest extends AbstractTest {
 
     @Test
     void testVimsottariDasa() throws IOException {
-        appendInsertStmt(EVimsottariDasa.values(), "vimsottari_dasa");
+        appendInsertStmt(EVimsottariDasa.values(), "vimsottari_dasa", true);
     }
 
     @Test
     void testDignity() throws IOException {
-        appendInsertStmt(EDignity.values(), "dignity");
+        appendInsertStmt(EDignity.values(), "dignity", true);
     }
 
     @Test
     void testGraha() throws IOException {
-        appendInsertStmt(EGraha.values(), "graha");
+        appendInsertStmt(EGraha.values(), "graha", true);
     }
 
     @Test
     void testCharaKaraka() throws IOException {
-        appendInsertStmt(ECharaKaraka.values(), "chara_karaka");
+        appendInsertStmt(ECharaKaraka.values(), "chara_karaka", true);
     }
 
     @Test
     void testKarana() throws IOException {
-        appendInsertStmt(EKarana.values(), "karana");
+        appendInsertStmt(EKarana.values(), "karana", true);
     }
 
     @Test
     void testLagna() throws IOException {
-        appendInsertStmt(ELagna.values(), "lagna");
+        appendInsertStmt(ELagna.values(), "lagna", true);
     }
 
     @Test
@@ -265,26 +265,26 @@ public class KundaliEnumsTest extends AbstractTest {
 
     @Test
     void testUpagraha() throws IOException {
-        appendInsertStmt(EUpagraha.values(), "upagraha");
+        appendInsertStmt(EUpagraha.values(), "upagraha", true);
     }
 
     @Test
     void testVaara() throws IOException {
-        appendInsertStmt(EVaara.values(), "vaara");
+        appendInsertStmt(EVaara.values(), "vaara", true);
     }
 
     @Test
     void testVarga() throws IOException {
-        appendInsertStmt(EVarga.values(), "varga");
+        appendInsertStmt(EVarga.values(), "varga", true);
     }
 
     @Test
     void testNityaYoga() throws IOException {
-        appendInsertStmt(ENityaYoga.values(), "nitya_yoga");
+        appendInsertStmt(ENityaYoga.values(), "nitya_yoga", true);
     }
 
     @Test
     void testMaasa() throws IOException {
-        appendInsertStmt(EMaasa.values(), "maasa");
+        appendInsertStmt(EMaasa.values(), "maasa", true);
     }
 }
