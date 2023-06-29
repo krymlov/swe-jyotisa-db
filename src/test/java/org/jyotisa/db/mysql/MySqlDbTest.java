@@ -52,7 +52,6 @@ public class MySqlDbTest extends AMySqlDbTest {
 
     @Test
     @Order(1)
-    @Disabled
     public void referenceKundali_2023_1_1() {
         final IKundali kundali = newKundali(newYearDateTime(2023, 1, 1));
         System.out.println(kundali);
@@ -60,17 +59,16 @@ public class MySqlDbTest extends AMySqlDbTest {
 
     @Test
     @Order(5)
-    @Disabled
     public void referenceKundali_2023_07_17() {
         final IKundali kundali = newKundali(newYearDateTime(2023, 7, 17));
         System.out.println(kundali);
     }
 
     @Order(10)
-    @RepeatedTest(1)
     @Disabled
+    @RepeatedTest(1)
     public void referenceKundaliTo_2050(RepetitionInfo rinfo) throws SQLException {
-        calculateKundaliForYear(2050 - rinfo.getCurrentRepetition());
+        calculateKundaliForYear(2051 - rinfo.getCurrentRepetition());
     }
 
     void calculateKundaliForYear(final int year) throws SQLException {
