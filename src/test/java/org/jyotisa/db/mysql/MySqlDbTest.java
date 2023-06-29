@@ -37,7 +37,8 @@ import static org.jyotisa.db.sqlutils.SqlUtils.insertBatch;
 import static org.jyotisa.graha.EGraha.TEEVRA;
 import static org.jyotisa.lagna.ELagna.GHATI_LAGNA;
 import static org.jyotisa.upagraha.EUpagraha.UPAKETU;
-import static org.swisseph.api.ISweConstants.*;
+import static org.swisseph.api.ISweConstants.d0;
+import static org.swisseph.app.SweJulianDate.localTime;
 import static org.swisseph.app.SweObjectsOptions.TRUECITRA_AYANAMSA;
 import static org.swisseph.utils.IDateUtils.convert;
 import static org.swisseph.utils.IDegreeUtils.toIDMSms;
@@ -66,7 +67,7 @@ public class MySqlDbTest extends AMySqlDbTest {
     }
 
     @Order(10)
-    @RepeatedTest(2051)
+    @RepeatedTest(1)
     @Disabled
     public void referenceKundaliTo_2050(RepetitionInfo rinfo) throws SQLException {
         calculateKundaliForYear(2050 - rinfo.getCurrentRepetition());
@@ -104,7 +105,7 @@ public class MySqlDbTest extends AMySqlDbTest {
     IKundali newKundali(final LocalDateTime ldt) {
         final int[] dt = new int[]{ldt.getYear(), ldt.getMonthValue(),
                 ldt.getDayOfMonth(), ldt.getHour(), ldt.getMinute(), ldt.getSecond()};
-        final SweJulianDate julianDate = new SweJulianDate(dt, (float) TIME_ZONE, SweJulianDate.localTime(dt));
+        final SweJulianDate julianDate = new SweJulianDate(dt, (float) TIME_ZONE, localTime(dt));
         ISweObjects sweObjects = new SweObjects(getSwephExp(), julianDate, GEO_KYIV, TRUECITRA_AYANAMSA);
         return new Kundali(KUNDALI_7_KARAKAS, sweObjects.completeBuild());
     }
@@ -112,14 +113,14 @@ public class MySqlDbTest extends AMySqlDbTest {
     Object[] prepareKundaliObjects(final IKundali kundali) {
         final ISweObjects sweObjects = kundali.sweObjects();
         final ISweJulianDate jd = sweObjects.sweJulianDate();
-        return new Object[]{1, convert(jd), 0, toIDMSms(kundali.fields()
-                .siderealTime()), toIDMSms(sweObjects.ayanamsa()), jd.julianDay()};
+        // var siderealTime = toIDMSms(kundali.fields().siderealTime())
+        return new Object[]{2, convert(jd), 0, toIDMSms(sweObjects.ayanamsa()), jd.julianDay()};
     }
 
     void insertBatchKundalis(List<KundaliObjects> kundalis) throws SQLException {
         final Object[][] batch = new Object[kundalis.size()][];
         for (int i = 0; i < kundalis.size(); i++) batch[i] = kundalis.get(i).kundaliObjects;
-        List<Object[]> ids = insertBatch("INSERT INTO kundali VALUES(0,?,?,?,?,?,?)", batch);
+        List<Object[]> ids = insertBatch("INSERT INTO kundali VALUES(0,?,?,?,?,?)", batch);
         Assertions.assertEquals(kundalis.size(), ids.size());
 
         for (int i = 0; i < kundalis.size(); i++) {
@@ -131,7 +132,7 @@ public class MySqlDbTest extends AMySqlDbTest {
     void insertBatchD1LagnaN(List<KundaliObjects> kundalis, ILagna lagna) throws SQLException {
         final Object[][] batch = new Object[kundalis.size()][];
         for (int i = 0; i < kundalis.size(); i++) batch[i] = prepareD1LagnaN(kundalis.get(i), lagna);
-        List<Object[]> ids = insertBatch("INSERT INTO d1_lagna" + lagna.fid()
+        List<Object[]> ids = insertBatch("INSERT INTO d1_lagna_" + lagna.fid()
                 + " VALUES(?,?,?,?,?,?,?,?,?,?)", batch);
         Assertions.assertEquals(0, ids.size());
     }
@@ -150,7 +151,7 @@ public class MySqlDbTest extends AMySqlDbTest {
     void insertBatchD1BBindu(List<KundaliObjects> kundalis) throws SQLException {
         final Object[][] batch = new Object[kundalis.size()][];
         for (int i = 0; i < kundalis.size(); i++) batch[i] = prepareD1BBindu(kundalis.get(i));
-        List<Object[]> ids = insertBatch("INSERT INTO d1_bbindu VALUES(?,?,?,?,?,?,?,?,?,?)", batch);
+        List<Object[]> ids = insertBatch("INSERT INTO d1_bhrigu_bindu VALUES(?,?,?,?,?,?,?,?,?,?)", batch);
         Assertions.assertEquals(0, ids.size());
     }
 
@@ -170,7 +171,7 @@ public class MySqlDbTest extends AMySqlDbTest {
         for (int i = 0; i < kundalis.size(); i++) {
             batch[i] = prepareD1GrahaN(kundalis.get(i), graha);
         }
-        List<Object[]> ids = insertBatch("INSERT INTO d1_graha" + graha.fid()
+        List<Object[]> ids = insertBatch("INSERT INTO d1_graha_" + graha.fid()
                 + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", batch);
         Assertions.assertEquals(0, ids.size());
     }
@@ -195,7 +196,7 @@ public class MySqlDbTest extends AMySqlDbTest {
         for (int i = 0; i < kundalis.size(); i++) {
             batch[i] = prepareD1UpagrahaN(kundalis.get(i), upagraha);
         }
-        List<Object[]> ids = insertBatch("INSERT INTO d1_upagraha" + upagraha.fid()
+        List<Object[]> ids = insertBatch("INSERT INTO d1_upagraha_" + upagraha.fid()
                 + " VALUES(?,?,?,?,?,?,?,?,?,?)", batch);
         Assertions.assertEquals(0, ids.size());
     }

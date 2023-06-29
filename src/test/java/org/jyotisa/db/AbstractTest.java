@@ -38,11 +38,10 @@ public abstract class AbstractTest {
 
     protected File sqlFile;
 
-    /**
-     * Place : Kyiv, Ukraine<br>
-     * Location : 50°27'N, 30°31'E. Time Zone : (+02:00)
-     */
-    public static final ISweGeoLocation GEO_KYIV = new SweGeoLocation(30 + (31 / 60.), 50 + (27 / 60.), 180);
+    @AfterAll
+    protected void callAfterAll() {
+        closeSwephExp();
+    }
 
     /**
      * Place : London, UK
@@ -51,9 +50,12 @@ public abstract class AbstractTest {
      */
     public static final ISweGeoLocation GEO_LONDON = new SweGeoLocation(-0.1166667, 51.5000000, 11);
 
-    private static ISwissEph newSwephExp() {
-        return new SwephNative(EPHE_PATH);
-    }
+    /**
+     * Place : Kyiv, Ukraine<br>
+     * Longitude in DMS format: 30°31'E
+     * Latitude in DMS format: 50°27'N
+     */
+    public static final ISweGeoLocation GEO_KYIV = new SweGeoLocation(30 + (31 / 60.), 50 + (27 / 60.), 180);
 
     public static ISwissEph getSwephExp() {
         ISwissEph swissEph = SWEPH_EXPS.get();
@@ -66,9 +68,8 @@ public abstract class AbstractTest {
         return swissEph;
     }
 
-    @AfterAll
-    protected void callAfterAll() {
-        closeSwephExp();
+    private static ISwissEph newSwephExp() {
+        return new SwephNative(EPHE_PATH);
     }
 
     public static void closeSwephExp() {
@@ -78,11 +79,6 @@ public abstract class AbstractTest {
         }
     }
 
-    protected void appendEnumsToSqlFile(String table, StringBuilder data, boolean delete) throws IOException {
-        if (delete) writeStringToFile(sqlFile, "\n\nDELETE FROM " + table + ";", UTF_8, true);
-        writeStringToFile(sqlFile, data.toString(), UTF_8, true);
-    }
-
     protected Document enumProps(ISweEnum sweEnum) {
         Document document = new Document();
         document.append("id", sweEnum.uid());
@@ -90,5 +86,10 @@ public abstract class AbstractTest {
         document.append("code", sweEnum.code());
         document.append("name", sweEnum.name());
         return document;
+    }
+
+    protected void appendEnumsToSqlFile(String table, StringBuilder data, boolean delete) throws IOException {
+        if (delete) writeStringToFile(sqlFile, "\n\nDELETE FROM " + table + ";", UTF_8, true);
+        writeStringToFile(sqlFile, data.toString(), UTF_8, true);
     }
 }

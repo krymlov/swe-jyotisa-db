@@ -57,25 +57,43 @@ public class SwissephEnumsTest extends AbstractTest {
 
     @Test
     void testSweHouseSystem() throws IOException {
-        appendInsertStmt(SweHouseSystem.values(), "house_system", true);
+        appendInsertStmt(SweHouseSystem.values(), "meta_house_system", true);
     }
 
     @Test
     void testSweAyanamsa() throws IOException {
         SweAyanamsa[] ayanamsas = SweAyanamsa.values();
-        int ayanamsasLength = ayanamsas.length;
+        final int ayanamsasLength = ayanamsas.length - 1;
 
         for (int i = 0; i < AY_USER.fid(); i++) {
             if (i < ayanamsasLength) {
                 SweAyanamsa ayanamsa = SweAyanamsa.values()[i];
-                appendInsertStmt(new ISweEnum[]{ayanamsa}, "ayanamsa", i == 0);
+                appendInsertStmt(new ISweEnum[]{ayanamsa}, "meta_ayanamsa", i == 0);
+            } else {
+                ISweEnum sweEnum = newSweEnum(i, i, "AY" + i, "AY" + i);
+                appendInsertStmt(new ISweEnum[]{sweEnum}, "meta_ayanamsa", false);
             }
         }
 
+        ISweEnum sweEnum = newSweEnum(AY_USER.fid(), AY_USER.fid(), AY_USER.code(), AY_USER.name());
+        appendInsertStmt(new ISweEnum[]{sweEnum}, "meta_ayanamsa", false);
     }
 
     @Test
     void testSweGender() throws IOException {
-        appendInsertStmt(SweGender.values(), "gender", true);
+        appendInsertStmt(SweGender.values(), "meta_gender", true);
+    }
+
+    ISweEnum newSweEnum(int fid, int uid, String code, String name) {
+        return new ISweEnum() {
+            @Override
+            public int fid() {return fid;}
+            @Override
+            public int uid() {return uid;}
+            @Override
+            public String code() {return code;}
+            @Override
+            public String name() {return name;}
+        };
     }
 }

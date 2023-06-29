@@ -205,86 +205,86 @@ public class KundaliEnumsTest extends AbstractTest {
 
     @Test
     void testTattva() throws IOException {
-        appendInsertStmt(ETattva.values(), "tattva", true);
+        appendInsertStmt(ETattva.values(), "meta_tattva", true);
     }
 
     @Test
     void testBhava() throws IOException {
-        createBhavaInsertStmt(EBhava.values(), "bhava");
+        createBhavaInsertStmt(EBhava.values(), "meta_bhava");
     }
 
     @Test
     void testVimsottariDasa() throws IOException {
-        appendInsertStmt(EVimsottariDasa.values(), "vimsottari_dasa", true);
+        appendInsertStmt(EVimsottariDasa.values(), "meta_vimsottari_dasa", true);
     }
 
     @Test
     void testDignity() throws IOException {
-        appendInsertStmt(EDignity.values(), "dignity", true);
+        appendInsertStmt(EDignity.values(), "meta_dignity", true);
     }
 
     @Test
     void testGraha() throws IOException {
-        appendInsertStmt(EGraha.values(), "graha", true);
+        appendInsertStmt(EGraha.values(), "meta_graha", true);
     }
 
     @Test
     void testCharaKaraka() throws IOException {
-        appendInsertStmt(ECharaKaraka.values(), "chara_karaka", true);
+        appendInsertStmt(ECharaKaraka.values(), "meta_chara_karaka", true);
     }
 
     @Test
     void testKarana() throws IOException {
-        appendInsertStmt(EKarana.values(), "karana", true);
+        appendInsertStmt(EKarana.values(), "meta_karana", true);
     }
 
     @Test
     void testLagna() throws IOException {
-        appendInsertStmt(ELagna.values(), "lagna", true);
+        appendInsertStmt(ELagna.values(), "meta_lagna", true);
     }
 
     @Test
     void testNaksatra() throws IOException {
-        createNaksatraInsertStmt(ENaksatra.values(), "naksatra");
+        createNaksatraInsertStmt(ENaksatra.values(), "meta_naksatra");
     }
 
     @Test
     void testNaksatraPada() throws IOException {
-        createPadaInsertStmt(ENaksatraPada.values(), "naksatra_pada");
+        createPadaInsertStmt(ENaksatraPada.values(), "meta_naksatra_pada");
     }
 
     @Test
     void testRasi() throws IOException {
-        createRasiInsertStmt(ERasi.values(), "rasi");
+        createRasiInsertStmt(ERasi.values(), "meta_rasi");
     }
 
     @Test
     void testTithi() throws IOException {
-        createTithiInsertStmt(ETithi.values(), "tithi");
+        createTithiInsertStmt(ETithi.values(), "meta_tithi");
     }
 
     @Test
     void testUpagraha() throws IOException {
-        appendInsertStmt(EUpagraha.values(), "upagraha", true);
+        appendInsertStmt(EUpagraha.values(), "meta_upagraha", true);
     }
 
     @Test
     void testVaara() throws IOException {
-        appendInsertStmt(EVaara.values(), "vaara", true);
+        appendInsertStmt(EVaara.values(), "meta_vaara", true);
     }
 
     @Test
     void testVarga() throws IOException {
-        appendInsertStmt(EVarga.values(), "varga", true);
+        appendInsertStmt(EVarga.values(), "meta_varga", true);
     }
 
     @Test
     void testNityaYoga() throws IOException {
-        appendInsertStmt(ENityaYoga.values(), "nitya_yoga", true);
+        appendInsertStmt(ENityaYoga.values(), "meta_nitya_yoga", true);
     }
 
     @Test
     void testMaasa() throws IOException {
-        appendInsertStmt(EMaasa.values(), "maasa", true);
+        appendInsertStmt(EMaasa.values(), "meta_maasa", true);
     }
 }
